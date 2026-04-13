@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Collegium — Tokenized Real World Assets on Solana</title>
+  <meta name="description" content="Trade 100 grouped RWA ETFs governed by DAO quorum on Solana."/>
+  <link rel="icon" href="/favicon.ico"/><link rel="apple-touch-icon" href="/logo192.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{min-height:100vh;background:linear-gradient(170deg,#0a0a0f 0%,#0d0d18 40%,#111118 100%);color:#e8e8f0;font-family:'DM Sans','Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}button{font-family:inherit}
+    .mono{font-family:'Space Mono',monospace}
+    .glow{position:fixed;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(232,117,26,0.08) 0%,transparent 70%);pointer-events:none}
+    nav{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.05);padding:0 24px}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+    .nav-logo{display:flex;align-items:center;gap:12px}.nav-logo img{width:36px;height:36px;border-radius:8px}
+    .nav-links{display:flex;align-items:center;gap:8px}
+    .nb{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);color:#ccc;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
+    .nb:hover{background:rgba(255,255,255,0.08)}
+    .nb-buy{background:linear-gradient(135deg,rgba(232,117,26,0.15),rgba(232,117,26,0.08));border-color:rgba(232,117,26,0.25);color:#E8751A;font-weight:600}
+    .nb-connect{background:linear-gradient(135deg,#E8751A,#d4600e);border:none;color:#fff;font-weight:600}
+    .nb-connected{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.25);color:#22c55e;font-weight:600}
+    .hamburger{display:none;padding:8px;background:transparent;border:none;color:#e8e8f0;cursor:pointer;font-size:24px}
+    .mobile-menu{display:none;flex-direction:column;gap:8px;padding:16px 0 24px;border-top:1px solid rgba(255,255,255,0.05)}.mobile-menu.open{display:flex}
+    .hero{max-width:1200px;margin:0 auto;padding:80px 24px 60px;text-align:center}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 8px;border-radius:999px;background:rgba(232,117,26,0.08);border:1px solid rgba(232,117,26,0.15);font-size:13px;color:#E8751A;font-weight:500;margin-bottom:28px}
+    .badge .dot{width:8px;height:8px;border-radius:50%;background:#E8751A;animation:pulse 2s infinite}
+    .hero h1{font-size:clamp(36px,6vw,68px);font-weight:700;line-height:1.08;margin:0 auto 20px;max-width:800px;letter-spacing:-2px;color:#fff}
+    .hero h1 span{color:#E8751A}
+    .hero p{font-size:clamp(15px,2vw,18px);color:#888;max-width:560px;margin:0 auto 40px;line-height:1.7}
+    .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn-p{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:14px;background:linear-gradient(135deg,#E8751A,#c45a08);color:#fff;font-size:15px;font-weight:600;box-shadow:0 4px 24px rgba(232,117,26,0.3);border:none;cursor:pointer}
+    .btn-s{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#e8e8f0;font-size:15px;font-weight:500;cursor:pointer}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;margin-top:72px;background:rgba(255,255,255,0.04);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+    .stat{padding:24px 20px;background:rgba(10,10,15,0.7);text-align:center}
+    .stat-v{font-size:clamp(22px,3vw,28px);font-weight:700;color:#fff}
+    .stat-l{font-size:12px;color:#666;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+    .sec{max-width:1200px;margin:0 auto;padding:0 24px 80px}
+    .toolbar{display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+    .tabs{display:flex;gap:4px;background:rgba(255,255,255,0.03);border-radius:12px;padding:4px;overflow-x:auto}
+    .tab{padding:10px 18px;border-radius:10px;border:none;background:transparent;color:#666;font-size:12px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap}
+    .tab.active{background:rgba(232,117,26,0.12);color:#E8751A}
+    .search-wrap{position:relative;flex:1;min-width:180px;max-width:340px}
+    .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#555}
+    .search-wrap input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:#e8e8f0;font-size:13px;outline:none;font-family:inherit}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:14px}
+    .card{background:linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:22px;transition:all 0.3s;cursor:pointer}
+    .card:hover{border-color:rgba(232,117,26,0.25);transform:translateY(-2px)}
+    .card-trade{margin-top:16px;width:100%;padding:10px;border-radius:10px;border:1px solid rgba(232,117,26,0.2);background:rgba(232,117,26,0.06);color:#E8751A;font-size:11px;font-weight:600;cursor:pointer;transition:background 0.2s}
+    .card-trade:hover{background:rgba(232,117,26,0.15)}
+    .proposal{background:linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:12px}
+    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+    .step{padding:28px 24px;border-radius:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05)}
+    footer{border-top:1px solid rgba(255,255,255,0.05);padding:32px 24px;max-width:1200px;margin:0 auto}
+    .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+    .modal{background:linear-gradient(145deg,#1a1a28,#14141f);border:1px solid rgba(232,117,26,0.2);border-radius:20px;padding:32px;max-width:380px;width:100%}
+    .wallet-opt{display:flex;align-items:center;gap:12px;width:100%;padding:14px 18px;margin-bottom:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:#e8e8f0;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.2s}
+    .wallet-opt:hover{background:rgba(232,117,26,0.1);border-color:rgba(232,117,26,0.3)}
+    .hidden{display:none!important}
+    .show-more{text-align:center;margin-top:32px}
+    .show-more button{padding:12px 40px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);color:#ccc;font-size:14px;font-weight:500;cursor:pointer}
+    .empty{text-align:center;padding:60px 20px;color:#555}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{animation:fadeUp .8s cubic-bezier(.16,1,.3,1) forwards}
+    @media(max-width:768px){.nav-links{display:none}.hamburger{display:block}.hide-mobile{display:none}}
+    @media(min-width:769px){.hamburger{display:none}.mobile-menu{display:none!important}}
+  </style>
+</head>
+<body>
+<div class="glow"></div>
+<div id="walletModal" class="modal-bg hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3 style="margin:0 0 8px;font-size:20px;font-weight:600;color:#fff">Connect Wallet</h3>
+    <p style="margin:0 0 24px;font-size:14px;color:#888">Select a Solana wallet</p>
+    <button class="wallet-opt" onclick="connectWallet('phantom')"><div style="width:36px;height:36px;border-radius:10px;background:#ab9ff2;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff">P</div>Phantom</button>
+    <button class="wallet-opt" onclick="connectWallet('solflare')"><div style="width:36px;height:36px;border-radius:10px;background:#fc7227;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff">S</div>Solflare</button>
+    <button class="wallet-opt" onclick="connectWallet('backpack')"><div style="width:36px;height:36px;border-radius:10px;background:#59f;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff">B</div>Backpack</button>
+    <button onclick="closeModal()" style="margin-top:8px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#888;font-size:14px;cursor:pointer">Cancel</button>
+  </div>
+</div>
+<nav><div class="nav-inner">
+  <a href="/" class="nav-logo"><img src="/logo.png" alt="Collegium"/><span class="mono" style="font-size:20px;font-weight:700;letter-spacing:-0.5px;color:#fff">COLLEGIUM</span></a>
+  <div class="nav-links">
+    <a href="https://x.com/collegiumfun" target="_blank" class="nb"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span class="hide-mobile">Twitter</span></a>
+    <a href="https://github.com/collegium-cli" target="_blank" class="nb"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg><span class="hide-mobile">GitHub</span></a>
+    <a href="https://gmgn.ai" target="_blank" class="nb nb-buy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="hide-mobile">Buy $CLGM</span></a>
+    <button id="connectBtn" class="nb nb-connect" onclick="openModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>Connect Wallet</button>
+  </div>
+  <button class="hamburger" onclick="toggleMobile()">☰</button>
+</div>
+<div id="mobileMenu" class="mobile-menu">
+  <a href="https://x.com/collegiumfun" target="_blank" class="nb" style="padding:12px 16px">Twitter / X</a>
+  <a href="https://github.com/collegium-cli" target="_blank" class="nb" style="padding:12px 16px">GitHub</a>
+  <a href="https://gmgn.ai" target="_blank" class="nb nb-buy" style="padding:12px 16px">Buy $CLGM</a>
+  <button class="nb nb-connect" style="padding:12px 16px" onclick="openModal();toggleMobile()">Connect Wallet</button>
+</div></nav>
+
+<section class="hero"><div class="fade-up">
+  <div class="badge"><div class="dot"></div>Built on Solana</div>
+  <h1 class="mono">Tokenized <span>Real World</span> Assets on Chain</h1>
+  <p>Trade 100 grouped RWA ETFs — from England property to US Treasuries — governed by DAO quorum on Solana.</p>
+  <div class="hero-btns">
+    <a href="https://gmgn.ai" target="_blank" class="btn-p">Buy $CLGM Token</a>
+    <button class="btn-s" onclick="openModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>Launch App</button>
+  </div>
+</div>
+<div class="stats" id="statsBar"></div>
+</section>
+
+<section class="sec">
+  <div class="toolbar">
+    <div class="tabs" id="tabsBar"></div>
+    <div class="search-wrap" id="searchWrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" placeholder="Search funds, tickers..." oninput="render()"/>
+    </div>
+    <span id="countLabel" class="mono" style="font-size:12px;color:#555"></span>
+  </div>
+  <div id="content"></div>
+  <div id="showMore" class="show-more hidden"><button onclick="showMoreFn()">Show More</button></div>
+</section>
+
+<section class="sec">
+  <h2 class="mono" style="font-size:clamp(24px,4vw,36px);font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:40px">How It <span style="color:#E8751A">Works</span></h2>
+  <div class="steps">
+    <div class="step"><div class="mono" style="font-size:32px;font-weight:700;color:rgba(232,117,26,0.3);margin-bottom:12px">01</div><div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Connect Wallet</div><div style="font-size:13px;color:#777;line-height:1.6">Link your Solana wallet (Phantom, Solflare, or Backpack) to access the platform.</div></div>
+    <div class="step"><div class="mono" style="font-size:32px;font-weight:700;color:rgba(232,117,26,0.3);margin-bottom:12px">02</div><div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Browse 100 RWA ETFs</div><div style="font-size:13px;color:#777;line-height:1.6">Explore tokenized real-world asset funds — property, energy, agriculture, collectibles & more.</div></div>
+    <div class="step"><div class="mono" style="font-size:32px;font-weight:700;color:rgba(232,117,26,0.3);margin-bottom:12px">03</div><div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Trade & Earn</div><div style="font-size:13px;color:#777;line-height:1.6">Buy and sell RWA tokens instantly. Earn yield from underlying real-world assets.</div></div>
+    <div class="step"><div class="mono" style="font-size:32px;font-weight:700;color:rgba(232,117,26,0.3);margin-bottom:12px">04</div><div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:8px">Govern via DAO</div><div style="font-size:13px;color:#777;line-height:1.6">Vote on proposals. New asset listings require DAO quorum approval before going live.</div></div>
+  </div>
+</section>
+
+<footer><div class="footer-inner">
+  <a href="/" style="display:flex;align-items:center;gap:10px"><img src="/logo.png" alt="" style="width:28px;height:28px;border-radius:6px"/><span class="mono" style="font-size:14px;font-weight:700;color:#888">COLLEGIUM</span></a>
+  <div style="display:flex;gap:20px"><a href="https://x.com/collegiumfun" target="_blank" style="color:#666"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a><a href="https://github.com/collegium-cli" target="_blank" style="color:#666"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a></div>
+  <div style="font-size:12px;color:#444">&copy; 2026 Collegium. Powered by Solana.</div>
+</div></footer>
+
+<script>
+const allFunds = [
+  { name: "England Residential RE", ticker: "ENGR", category: "rwa", apy: "9.3%", tvl: "$2.4M", change: "-0.3%", status: "Active", desc: "Diversified UK residential properties across London, Manchester & Birmingham" },
+  { name: "England Commercial RE", ticker: "ENGC", category: "rwa", apy: "4.5%", tvl: "$6.0M", change: "+3.4%", status: "Active", desc: "Prime UK commercial office & retail real estate portfolio" },
+  { name: "London Prime Property", ticker: "LDNP", category: "rwa", apy: "8.9%", tvl: "$2.7M", change: "-1.8%", status: "Active", desc: "Ultra-prime Central London residential & mixed-use assets" },
+  { name: "UK Student Housing", ticker: "UKSH", category: "rwa", apy: "8.1%", tvl: "$2.4M", change: "-0.9%", status: "Active", desc: "Purpose-built student accommodation across UK university towns" },
+  { name: "Scotland Highland Estates", ticker: "SCHL", category: "rwa", apy: "3.2%", tvl: "$35.1M", change: "+2.5%", status: "Active", desc: "Scottish highland estates, farmland & tourism properties" },
+  { name: "Wales Mixed Property", ticker: "WLMP", category: "rwa", apy: "6.2%", tvl: "$36.7M", change: "+3.9%", status: "Voting", desc: "Welsh residential & commercial real estate diversified fund" },
+  { name: "EU Commercial RE", ticker: "EUCR", category: "rwa", apy: "10.4%", tvl: "$24.1M", change: "+0.5%", status: "Active", desc: "Prime European commercial properties across 6 countries" },
+  { name: "Paris Luxury RE", ticker: "PLRE", category: "rwa", apy: "11.3%", tvl: "$15.3M", change: "+4.3%", status: "Active", desc: "High-end Parisian residential & boutique commercial assets" },
+  { name: "Berlin Urban RE", ticker: "BURE", category: "rwa", apy: "7.8%", tvl: "$3.4M", change: "+1.9%", status: "Active", desc: "Berlin residential apartments & mixed-use developments" },
+  { name: "Amsterdam Canal Property", ticker: "AMCP", category: "rwa", apy: "4.7%", tvl: "$47.2M", change: "-1.4%", status: "Active", desc: "Historic Amsterdam canal district & modern office portfolio" },
+  { name: "Barcelona Coastal RE", ticker: "BCRE", category: "rwa", apy: "6.8%", tvl: "$19.4M", change: "+2.1%", status: "Voting", desc: "Barcelona beachfront, Gothic Quarter & tech district properties" },
+  { name: "Milan Fashion District RE", ticker: "MFDR", category: "rwa", apy: "12.1%", tvl: "$8.9M", change: "+3.7%", status: "Active", desc: "Milan luxury retail & fashion district commercial assets" },
+  { name: "Lisbon Golden Visa RE", ticker: "LGVR", category: "rwa", apy: "5.4%", tvl: "$12.6M", change: "+0.8%", status: "Active", desc: "Lisbon renovation projects & golden visa eligible properties" },
+  { name: "Swiss Alpine Property", ticker: "SWAP", category: "rwa", apy: "9.7%", tvl: "$31.2M", change: "+5.1%", status: "Active", desc: "Swiss mountain resort & luxury chalet portfolio" },
+  { name: "Dubai Marina RE", ticker: "DMRE", category: "rwa", apy: "8.3%", tvl: "$22.5M", change: "-0.6%", status: "Pending", desc: "Dubai Marina & Downtown premium residential towers" },
+  { name: "Abu Dhabi Commercial", ticker: "ADCM", category: "rwa", apy: "7.1%", tvl: "$5.8M", change: "+1.3%", status: "Active", desc: "Abu Dhabi Saadiyat Island & business district assets" },
+  { name: "Singapore CBD RE", ticker: "SGCB", category: "rwa", apy: "10.9%", tvl: "$41.3M", change: "+4.8%", status: "Active", desc: "Singapore central business district office & retail" },
+  { name: "Tokyo Metro RE", ticker: "TKRE", category: "rwa", apy: "6.5%", tvl: "$17.9M", change: "+2.7%", status: "Active", desc: "Tokyo metropolitan area residential & commercial mix" },
+  { name: "Hong Kong Premium RE", ticker: "HKPR", category: "rwa", apy: "4.2%", tvl: "$28.4M", change: "-1.2%", status: "Voting", desc: "Hong Kong premium grade A office & luxury residential" },
+  { name: "Sydney Harbor RE", ticker: "SHRE", category: "rwa", apy: "11.6%", tvl: "$9.1M", change: "+3.2%", status: "Active", desc: "Sydney CBD & harbor-facing residential portfolio" },
+  { name: "Melbourne Urban RE", ticker: "MURE", category: "rwa", apy: "5.8%", tvl: "$33.7M", change: "+0.4%", status: "Active", desc: "Melbourne inner-city apartments & co-working spaces" },
+  { name: "New York Manhattan RE", ticker: "NYMR", category: "rwa", apy: "7.4%", tvl: "$44.6M", change: "+1.6%", status: "Active", desc: "Manhattan commercial office & luxury condo portfolio" },
+  { name: "Miami Waterfront RE", ticker: "MWRE", category: "rwa", apy: "12.4%", tvl: "$7.3M", change: "+5.3%", status: "Active", desc: "Miami Beach & Brickell waterfront luxury properties" },
+  { name: "LA West Side RE", ticker: "LAWR", category: "rwa", apy: "8.7%", tvl: "$14.2M", change: "+2.9%", status: "Active", desc: "Los Angeles Westside residential & entertainment district" },
+  { name: "Texas Ranch Land", ticker: "TXRL", category: "rwa", apy: "3.9%", tvl: "$26.8M", change: "-0.1%", status: "Active", desc: "Texas agricultural ranch land & rural development parcels" },
+  { name: "Canadian Ski Resort RE", ticker: "CSRR", category: "rwa", apy: "9.1%", tvl: "$10.5M", change: "+4.1%", status: "Voting", desc: "Whistler, Banff & Tremblant ski resort properties" },
+  { name: "Bali Villa Portfolio", ticker: "BLVP", category: "rwa", apy: "6.6%", tvl: "$3.9M", change: "+1.1%", status: "Active", desc: "Bali luxury villa & boutique hospitality portfolio" },
+  { name: "Maldives Resort RE", ticker: "MLDR", category: "rwa", apy: "11.8%", tvl: "$38.4M", change: "+3.5%", status: "Active", desc: "Maldives overwater villa & resort island assets" },
+  { name: "Caribbean Island RE", ticker: "CIRE", category: "rwa", apy: "5.1%", tvl: "$20.7M", change: "+0.7%", status: "Active", desc: "Caribbean multi-island resort & beachfront portfolio" },
+  { name: "Cape Town Coastal RE", ticker: "CTCR", category: "rwa", apy: "10.2%", tvl: "$13.1M", change: "+2.4%", status: "Pending", desc: "Cape Town Atlantic Seaboard & V&A Waterfront properties" },
+  { name: "Global Data Centers", ticker: "GDCI", category: "rwa", apy: "7.9%", tvl: "$42.8M", change: "+4.6%", status: "Active", desc: "Tier 4 data center facilities across North America & Europe" },
+  { name: "EU Toll Roads", ticker: "EUTR", category: "rwa", apy: "4.3%", tvl: "$8.2M", change: "+0.9%", status: "Active", desc: "European motorway & toll road concession portfolio" },
+  { name: "US Bridge & Tunnel", ticker: "USBT", category: "rwa", apy: "6.1%", tvl: "$16.4M", change: "-0.5%", status: "Active", desc: "American bridge, tunnel & critical infrastructure assets" },
+  { name: "Asian Ports Network", ticker: "ASPN", category: "rwa", apy: "12.7%", tvl: "$29.5M", change: "+5.5%", status: "Active", desc: "Major Asian container port & logistics hub holdings" },
+  { name: "Africa Telecom Towers", ticker: "AFTT", category: "rwa", apy: "8.5%", tvl: "$4.6M", change: "+3.3%", status: "Voting", desc: "Sub-Saharan Africa mobile telecom tower network" },
+  { name: "LatAm Rail Network", ticker: "LARN", category: "rwa", apy: "5.7%", tvl: "$11.8M", change: "+1.5%", status: "Active", desc: "Latin American freight & passenger railway concessions" },
+  { name: "Smart City Infra", ticker: "SMCI", category: "rwa", apy: "9.4%", tvl: "$34.9M", change: "+2.8%", status: "Active", desc: "IoT-enabled smart city infrastructure projects globally" },
+  { name: "Global Airport Holdings", ticker: "GAPH", category: "rwa", apy: "7.2%", tvl: "$21.3M", change: "-1.0%", status: "Active", desc: "Regional & international airport equity stakes" },
+  { name: "India Highway Fund", ticker: "INHF", category: "rwa", apy: "11.1%", tvl: "$6.7M", change: "+4.4%", status: "Active", desc: "Indian national highway & expressway BOT projects" },
+  { name: "Nordic EV Charging", ticker: "NEVC", category: "rwa", apy: "3.6%", tvl: "$45.1M", change: "+0.2%", status: "Pending", desc: "Scandinavian electric vehicle charging network assets" },
+  { name: "Solar Farm Global", ticker: "SLFG", category: "rwa", apy: "10.8%", tvl: "$18.6M", change: "+3.6%", status: "Active", desc: "Utility-scale solar PV installations across 12 countries" },
+  { name: "Wind Power Europe", ticker: "WNPE", category: "rwa", apy: "6.3%", tvl: "$37.2M", change: "+1.8%", status: "Active", desc: "Onshore & offshore wind energy projects in EU & UK" },
+  { name: "US Natural Gas", ticker: "USNG", category: "rwa", apy: "8.0%", tvl: "$9.8M", change: "-1.6%", status: "Active", desc: "Permian Basin & Marcellus Shale natural gas royalties" },
+  { name: "Hydro Power Asia", ticker: "HPAS", category: "rwa", apy: "4.9%", tvl: "$23.4M", change: "+2.3%", status: "Voting", desc: "Southeast Asian hydroelectric dam & run-of-river assets" },
+  { name: "Nuclear Energy Fund", ticker: "NUCF", category: "rwa", apy: "12.3%", tvl: "$1.5M", change: "+4.9%", status: "Active", desc: "Small modular reactor & nuclear facility equity portfolio" },
+  { name: "Green Hydrogen", ticker: "GRHY", category: "rwa", apy: "7.6%", tvl: "$30.6M", change: "+1.2%", status: "Active", desc: "Green hydrogen production & electrolyzer facility assets" },
+  { name: "Battery Storage Net", ticker: "BTSN", category: "rwa", apy: "5.3%", tvl: "$43.9M", change: "+3.0%", status: "Active", desc: "Grid-scale battery energy storage system portfolio" },
+  { name: "Geothermal Power", ticker: "GTMP", category: "rwa", apy: "9.9%", tvl: "$7.1M", change: "-0.8%", status: "Active", desc: "Iceland, Kenya & Indonesia geothermal plant holdings" },
+  { name: "Carbon Credit Fund", ticker: "CCRF", category: "rwa", apy: "3.4%", tvl: "$15.8M", change: "+0.6%", status: "Active", desc: "Verified carbon offset credits & sequestration projects" },
+  { name: "Biomass Energy EU", ticker: "BMEU", category: "rwa", apy: "11.5%", tvl: "$27.3M", change: "+5.0%", status: "Voting", desc: "European biomass & waste-to-energy facility portfolio" },
+  { name: "Brazil Coffee Farms", ticker: "BRCF", category: "rwa", apy: "6.9%", tvl: "$12.2M", change: "+2.6%", status: "Active", desc: "Brazilian arabica & robusta coffee plantation portfolio" },
+  { name: "Australia Wheat Belt", ticker: "AUWB", category: "rwa", apy: "8.4%", tvl: "$4.4M", change: "+1.4%", status: "Active", desc: "Western Australian broadacre wheat & grain farmland" },
+  { name: "Napa Valley Vineyards", ticker: "NVVY", category: "rwa", apy: "4.1%", tvl: "$39.7M", change: "-0.4%", status: "Active", desc: "Premium Napa & Sonoma Valley vineyard & winery assets" },
+  { name: "New Zealand Dairy", ticker: "NZDY", category: "rwa", apy: "10.6%", tvl: "$19.8M", change: "+4.2%", status: "Active", desc: "New Zealand dairy farm & processing facility portfolio" },
+  { name: "Ghana Cocoa Farms", ticker: "GHCF", category: "rwa", apy: "7.3%", tvl: "$2.1M", change: "+3.1%", status: "Pending", desc: "Ghanaian sustainable cocoa plantation & processing" },
+  { name: "Thai Rice Paddies", ticker: "THRP", category: "rwa", apy: "5.5%", tvl: "$32.5M", change: "+0.3%", status: "Active", desc: "Thai premium jasmine rice cultivation & storage assets" },
+  { name: "Argentine Cattle Ranch", ticker: "ARCR", category: "rwa", apy: "12.0%", tvl: "$10.9M", change: "+4.7%", status: "Active", desc: "Argentine Pampas cattle ranching & feedlot portfolio" },
+  { name: "Gold Mining Royalties", ticker: "GMRY", category: "rwa", apy: "6.7%", tvl: "$25.1M", change: "+1.7%", status: "Active", desc: "Precious metals mining royalty & streaming portfolio" },
+  { name: "Lithium Extraction", ticker: "LTEX", category: "rwa", apy: "9.2%", tvl: "$14.6M", change: "-2.0%", status: "Voting", desc: "Lithium brine & hard-rock extraction facility assets" },
+  { name: "Rare Earth Minerals", ticker: "RREM", category: "rwa", apy: "3.8%", tvl: "$46.3M", change: "+2.2%", status: "Active", desc: "Critical rare earth element mining & processing fund" },
+  { name: "US Treasury MMF", ticker: "USTM", category: "mmf", apy: "5.3%", tvl: "$24.1M", change: "+0.1%", status: "Active", desc: "Short-term US government bonds & money market instruments" },
+  { name: "EU Sovereign Bonds", ticker: "EUSB", category: "mmf", apy: "4.8%", tvl: "$18.7M", change: "+0.3%", status: "Active", desc: "Diversified Eurozone government bond portfolio" },
+  { name: "UK Gilt Fund", ticker: "UKGF", category: "mmf", apy: "5.1%", tvl: "$11.3M", change: "+0.2%", status: "Active", desc: "British government gilt-edged securities fund" },
+  { name: "Japan Govt Bonds", ticker: "JPGB", category: "mmf", apy: "3.4%", tvl: "$36.8M", change: "-0.1%", status: "Active", desc: "Japanese government bond & short-term note portfolio" },
+  { name: "EM Sovereign Debt", ticker: "EMSD", category: "mmf", apy: "8.6%", tvl: "$7.5M", change: "+1.8%", status: "Active", desc: "Emerging market sovereign debt diversified portfolio" },
+  { name: "US Corporate Bonds", ticker: "USCB", category: "mmf", apy: "6.2%", tvl: "$29.4M", change: "+0.5%", status: "Active", desc: "Investment-grade US corporate bond portfolio" },
+  { name: "EU High Yield", ticker: "EUHY", category: "mmf", apy: "9.1%", tvl: "$5.6M", change: "+1.2%", status: "Voting", desc: "European high yield corporate bond fund" },
+  { name: "Private Credit Fund", ticker: "PVCR", category: "mmf", apy: "10.3%", tvl: "$41.2M", change: "+2.4%", status: "Active", desc: "Senior secured private lending to mid-market companies" },
+  { name: "Trade Finance Pool", ticker: "TRFP", category: "mmf", apy: "7.5%", tvl: "$13.9M", change: "+0.8%", status: "Active", desc: "Short-term trade finance receivables & letters of credit" },
+  { name: "Invoice Factoring", ticker: "IVFC", category: "mmf", apy: "6.8%", tvl: "$22.1M", change: "+0.6%", status: "Active", desc: "SME invoice factoring & accounts receivable fund" },
+  { name: "Blue-Chip Art Fund", ticker: "BCAF", category: "rwa", apy: "7.7%", tvl: "$8.4M", change: "+3.8%", status: "Active", desc: "Museum-quality paintings from modern & contemporary masters" },
+  { name: "Classic Car Collection", ticker: "CLCC", category: "rwa", apy: "11.4%", tvl: "$3.2M", change: "+4.5%", status: "Active", desc: "Investment-grade vintage Ferrari, Porsche & Aston Martin" },
+  { name: "Fine Wine Cellar", ticker: "FWCL", category: "rwa", apy: "5.9%", tvl: "$16.7M", change: "+1.0%", status: "Active", desc: "Premier Cru Bordeaux & Grand Cru Burgundy wine portfolio" },
+  { name: "Rare Watch Vault", ticker: "RWVT", category: "rwa", apy: "10.1%", tvl: "$28.9M", change: "+3.4%", status: "Active", desc: "Patek Philippe, Audemars Piguet & Rolex collector pieces" },
+  { name: "Diamond Reserve", ticker: "DMRS", category: "rwa", apy: "4.6%", tvl: "$40.5M", change: "-0.7%", status: "Voting", desc: "GIA-certified investment-grade diamond holding fund" },
+  { name: "Luxury Yacht Fleet", ticker: "LYFT", category: "rwa", apy: "8.8%", tvl: "$6.3M", change: "+2.0%", status: "Active", desc: "Superyacht charter fleet & marina berth portfolio" },
+  { name: "Private Aviation", ticker: "PVAV", category: "rwa", apy: "12.5%", tvl: "$1.8M", change: "+5.2%", status: "Active", desc: "Fractional jet ownership & private aviation assets" },
+  { name: "Music Royalty Fund", ticker: "MSRF", category: "rwa", apy: "6.4%", tvl: "$35.4M", change: "+1.6%", status: "Active", desc: "Music publishing & streaming royalty income portfolio" },
+  { name: "Film Revenue Fund", ticker: "FLRF", category: "rwa", apy: "9.6%", tvl: "$11.1M", change: "+3.9%", status: "Pending", desc: "Independent film & documentary revenue share portfolio" },
+  { name: "Sports Franchise", ticker: "SPFR", category: "rwa", apy: "3.7%", tvl: "$47.8M", change: "+0.4%", status: "Active", desc: "Minority equity stakes in professional sports teams" },
+  { name: "IP Patent Pool", ticker: "IPPP", category: "rwa", apy: "7.0%", tvl: "$20.3M", change: "+2.5%", status: "Active", desc: "Technology & pharmaceutical patent licensing portfolio" },
+  { name: "Whisky Cask Fund", ticker: "WKCF", category: "rwa", apy: "11.7%", tvl: "$4.7M", change: "+4.0%", status: "Active", desc: "Single malt Scotch whisky cask maturation portfolio" },
+  { name: "Sneaker Vault", ticker: "SNVT", category: "rwa", apy: "5.2%", tvl: "$33.1M", change: "-1.3%", status: "Active", desc: "Limited edition sneaker & streetwear collectible fund" },
+  { name: "Trading Card Fund", ticker: "TCFD", category: "rwa", apy: "10.5%", tvl: "$9.5M", change: "+3.6%", status: "Voting", desc: "PSA-graded sports & TCG trading card portfolio" },
+  { name: "Comic Book Vault", ticker: "CBVT", category: "rwa", apy: "8.2%", tvl: "$23.8M", change: "+1.9%", status: "Active", desc: "Golden & Silver Age comic book investment collection" },
+  { name: "Stamp Collection", ticker: "STCL", category: "rwa", apy: "4.4%", tvl: "$14.9M", change: "+0.1%", status: "Active", desc: "Rare philatelic stamp investment grade portfolio" },
+  { name: "Antique Furniture", ticker: "ANFR", category: "rwa", apy: "6.0%", tvl: "$37.6M", change: "+2.8%", status: "Active", desc: "18th & 19th century European fine furniture collection" },
+  { name: "Luxury Handbag Fund", ticker: "LHBF", category: "rwa", apy: "9.8%", tvl: "$2.9M", change: "+4.3%", status: "Active", desc: "Investment-grade Hermes Birkin & Chanel collection" },
+  { name: "Digital Art & NFT", ticker: "DANF", category: "rwa", apy: "12.8%", tvl: "$17.4M", change: "+5.4%", status: "Pending", desc: "Curated blue-chip digital art & generative NFT fund" },
+  { name: "Vintage Guitar Fund", ticker: "VGFN", category: "rwa", apy: "7.5%", tvl: "$30.2M", change: "+1.3%", status: "Active", desc: "Pre-CBS Fender & Gibson vintage guitar collection" },
+  { name: "US Medical Office", ticker: "USMO", category: "rwa", apy: "5.6%", tvl: "$43.5M", change: "+0.9%", status: "Active", desc: "US medical office building & outpatient clinic portfolio" },
+  { name: "EU Hospital Fund", ticker: "EUHF", category: "rwa", apy: "10.0%", tvl: "$7.8M", change: "+3.5%", status: "Active", desc: "European private hospital & healthcare facility assets" },
+  { name: "Senior Living RE", ticker: "SLRE", category: "rwa", apy: "3.5%", tvl: "$26.4M", change: "-0.2%", status: "Active", desc: "UK & US senior living & assisted care facility fund" },
+  { name: "Pharma Lab Space", ticker: "PHLS", category: "rwa", apy: "11.2%", tvl: "$10.2M", change: "+4.1%", status: "Active", desc: "Biotech & pharmaceutical laboratory real estate fund" },
+  { name: "Dental Practice RE", ticker: "DPRE", category: "rwa", apy: "6.7%", tvl: "$38.9M", change: "+2.2%", status: "Voting", desc: "Multi-site dental practice & clinic property portfolio" },
+  { name: "UK Private Schools", ticker: "UKPS", category: "rwa", apy: "8.6%", tvl: "$5.1M", change: "+1.5%", status: "Active", desc: "UK independent school campus & boarding house portfolio" },
+  { name: "US Charter School RE", ticker: "UCSR", category: "rwa", apy: "4.0%", tvl: "$21.7M", change: "+0.7%", status: "Active", desc: "US charter school building & educational facility fund" },
+  { name: "Intl University RE", ticker: "IURE", category: "rwa", apy: "10.7%", tvl: "$13.4M", change: "+3.3%", status: "Active", desc: "International university campus & research park assets" },
+  { name: "Childcare Centers", ticker: "CCEN", category: "rwa", apy: "7.1%", tvl: "$34.6M", change: "+1.1%", status: "Active", desc: "Premium childcare & early learning center property fund" },
+  { name: "Veterinary Clinics", ticker: "VTCL", category: "rwa", apy: "9.5%", tvl: "$1.9M", change: "+4.8%", status: "Active", desc: "Veterinary hospital & animal care facility portfolio" },
+];
+
+const daoProposals = [
+  { id: "CIP-042", title: "Add Dubai Marina Properties to MENA RE Fund", votes: 847, quorum: 1000, status: "active", timeLeft: "2d 14h" },
+  { id: "CIP-041", title: "Increase England Property ETF allocation cap to 15%", votes: 1204, quorum: 1000, status: "passed", timeLeft: "Ended" },
+  { id: "CIP-040", title: "Launch Tokenized Art Collection Fund", votes: 523, quorum: 1000, status: "active", timeLeft: "5d 8h" },
+  { id: "CIP-039", title: "Open LatAm Rail Network to secondary market trading", votes: 1102, quorum: 1000, status: "passed", timeLeft: "Ended" },
+  { id: "CIP-038", title: "Add Green Hydrogen assets to Energy Basket", votes: 689, quorum: 1000, status: "active", timeLeft: "3d 2h" },
+  { id: "CIP-037", title: "Create Music Royalty yield distribution schedule", votes: 934, quorum: 1000, status: "active", timeLeft: "1d 6h" },
+  { id: "CIP-036", title: "Reduce quorum threshold from 1000 to 800 votes", votes: 1350, quorum: 1000, status: "passed", timeLeft: "Ended" },
+  { id: "CIP-035", title: "Partner with Chainlink for RWA oracle price feeds", votes: 412, quorum: 1000, status: "active", timeLeft: "6d 18h" },
+];
+
+let activeTab = "rwa", visible = 12;
+const PER_PAGE = 12;
+
+const totalTVL = allFunds.reduce((s,f) => s + parseFloat(f.tvl.replace(/[$M]/g,"")), 0).toFixed(1);
+
+document.getElementById("statsBar").innerHTML = [{l:"Total Value Locked",v:"$"+totalTVL+"M"},{l:"RWA Funds",v:"100"},{l:"Avg APY",v:"7.6%"},{l:"DAO Members",v:"2,841"}].map(s=>`<div class="stat"><div class="stat-v mono">${s.v}</div><div class="stat-l">${s.l}</div></div>`).join("");
+
+document.getElementById("tabsBar").innerHTML = [["all","🌐 All (100)"],["rwa","🏠 RWA ETFs"],["mmf","💰 Money Market"],["dao","🏛️ DAO"]].map(([k,l])=>`<button class="tab mono ${activeTab===k?'active':''}" onclick="switchTab('${k}')">${l}</button>`).join("");
+
+function switchTab(t){activeTab=t;visible=PER_PAGE;document.getElementById("tabsBar").innerHTML=[["all","🌐 All (100)"],["rwa","🏠 RWA ETFs"],["mmf","💰 Money Market"],["dao","🏛️ DAO"]].map(([k,l])=>`<button class="tab mono ${activeTab===k?'active':''}" onclick="switchTab('${k}')">${l}</button>`).join("");render()}
+
+function getFiltered(){const q=(document.getElementById("searchInput").value||"").toLowerCase();return allFunds.filter(f=>{const cat=activeTab==="all"||f.category===activeTab;const match=!q||f.name.toLowerCase().includes(q)||f.ticker.toLowerCase().includes(q)||f.desc.toLowerCase().includes(q);return cat&&match})}
+
+function showMoreFn(){visible+=PER_PAGE;render()}
+
+function render(){
+  const el=document.getElementById("content");const sm=document.getElementById("showMore");const sw=document.getElementById("searchWrap");const cl=document.getElementById("countLabel");
+  if(activeTab==="dao"){sw.classList.add("hidden");cl.classList.add("hidden");sm.classList.add("hidden");
+    el.innerHTML=daoProposals.map((p,i)=>`<div class="proposal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><div style="flex:1;min-width:200px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="mono" style="font-size:12px;color:#E8751A;font-weight:700">${p.id}</span><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;background:${p.status==="passed"?"rgba(34,197,94,0.1)":"rgba(59,130,246,0.1)"};color:${p.status==="passed"?"#22c55e":"#3b82f6"}">${p.status}</span></div><div style="font-size:15px;font-weight:500;color:#e0e0e0;margin-top:6px">${p.title}</div><div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#666;margin-bottom:6px"><span>${p.votes}/${p.quorum} votes</span><span>${p.timeLeft}</span></div><div style="height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:${Math.min((p.votes/p.quorum)*100,100)}%;background:${p.status==="passed"?"#22c55e":"#E8751A"};border-radius:2px"></div></div></div></div>${p.status==="active"?'<button class="btn-p" style="padding:10px 24px;font-size:13px" onclick="openVote('+i+')">Vote Now</button>':''}</div>`).join("");
+    return}
+  sw.classList.remove("hidden");cl.classList.remove("hidden");
+  const filtered=getFiltered();const shown=filtered.slice(0,visible);
+  cl.textContent=filtered.length+" funds";
+  if(filtered.length===0){el.innerHTML='<div class="empty"><div style="font-size:48px;margin-bottom:12px">🔍</div><div style="font-size:16px;font-weight:500">No funds found</div></div>';sm.classList.add("hidden");return}
+  el.innerHTML='<div class="cards">'+shown.map(f=>{
+    const sc=f.status==="Active"?"34,197,94":f.status==="Voting"?"251,191,36":"99,102,241";
+    const sn=f.status==="Active"?"#22c55e":f.status==="Voting"?"#fbbf24":"#818cf8";
+    const cc=f.change.startsWith("-")?"#ef4444":"#22c55e";
+    return`<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px"><div><div class="mono" style="font-size:11px;color:#E8751A;font-weight:700;margin-bottom:3px">$${f.ticker}</div><div style="font-size:14px;font-weight:600;color:#fff">${f.name}</div></div><span style="padding:3px 8px;border-radius:5px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;background:rgba(${sc},0.1);color:${sn};border:1px solid rgba(${sc},0.2)">${f.status}</span></div><p style="font-size:11px;color:#666;line-height:1.5;margin:0 0 16px;min-height:32px">${f.desc}</p><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px"><div><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">APY</div><div class="mono" style="font-size:13px;font-weight:600;color:#fff">${f.apy}</div></div><div><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">TVL</div><div class="mono" style="font-size:13px;font-weight:600;color:#fff">${f.tvl}</div></div><div><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px">24h</div><div class="mono" style="font-size:13px;font-weight:600;color:${cc}">${f.change}</div></div></div><button class="card-trade" onclick="openTrade('${f.ticker}')">Trade ${f.ticker}</button></div>`}).join("")+'</div>';
+  if(visible<filtered.length){sm.classList.remove("hidden");sm.querySelector("button").textContent="Show More ("+(filtered.length-visible)+" remaining)"}else{sm.classList.add("hidden")}
+}
+
+render();
+
+function toggleMobile(){const m=document.getElementById("mobileMenu");m.classList.toggle("open");document.querySelector(".hamburger").textContent=m.classList.contains("open")?"✕":"☰"}
+function openModal(){document.getElementById("walletModal").classList.remove("hidden")}
+function closeModal(){document.getElementById("walletModal").classList.add("hidden")}
+async function connectWallet(type){closeModal();try{let p=null;if(type==="phantom"&&window.solana?.isPhantom)p=window.solana;else if(type==="solflare"&&window.solflare?.isSolflare)p=window.solflare;else if(type==="backpack"&&window.backpack)p=window.backpack;if(p){const r=await p.connect();const a=r.publicKey.toString();const s=a.slice(0,4)+"..."+a.slice(-4);const b=document.getElementById("connectBtn");b.className="nb nb-connected";b.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div>'+s;b.onclick=disconnectWallet}else{alert(type[0].toUpperCase()+type.slice(1)+" wallet not detected.")}}catch(e){console.error(e)}}
+function disconnectWallet(){if(window.solana?.isPhantom)window.solana.disconnect();const b=document.getElementById("connectBtn");b.className="nb nb-connect";b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>Connect Wallet';b.onclick=openModal}
+
+let currentTradeFund = null;
+let currentVoteIdx = -1;
+
+function openTrade(ticker) {
+  const f = allFunds.find(x => x.ticker === ticker);
+  if (!f) return;
+  currentTradeFund = f;
+  document.getElementById('tradeTicker').textContent = 'Trade $' + f.ticker;
+  document.getElementById('tradeName').textContent = f.name;
+  document.getElementById('tradeApyLabel').textContent = f.apy;
+  document.getElementById('tradeAmtInput').value = '';
+  document.getElementById('tradePctSlider').value = 0;
+  document.getElementById('tradePctLabel').textContent = '0%';
+  document.getElementById('tradeStep1').classList.remove('hidden');
+  document.getElementById('tradeStep2').classList.add('hidden');
+  updateTradePreview();
+  document.getElementById('pctBtns').innerHTML = [25,50,75,100].map(p => '<button onclick="setPct('+p+')" class="mono" style="flex:1;padding:6px 0;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:#666;font-size:11px;font-weight:600;cursor:pointer">'+p+'%</button>').join('');
+  document.getElementById('tradeModal').classList.remove('hidden');
+}
+function closeTrade() {
+  document.getElementById('tradeModal').classList.add('hidden');
+  document.getElementById('tradeStep1').classList.remove('hidden');
+  document.getElementById('tradeStep2').classList.add('hidden');
+}
+function setPct(p) {
+  document.getElementById('tradePctSlider').value = p;
+  document.getElementById('tradeAmtInput').value = (p * 0.1).toFixed(2);
+  updatePct();
+  updateTradePreview();
+}
+function updatePct() {
+  const v = document.getElementById('tradePctSlider').value;
+  document.getElementById('tradePctLabel').textContent = v + '%';
+  document.getElementById('tradeAmtInput').value = (v * 0.1).toFixed(2);
+  updateTradePreview();
+}
+function updateTradePreview() {
+  const amt = parseFloat(document.getElementById('tradeAmtInput').value) || 0;
+  const f = currentTradeFund;
+  const ticker = f ? f.ticker : '';
+  document.getElementById('tradePayLabel').textContent = amt.toFixed(2) + ' SOL';
+  document.getElementById('tradeRecvLabel').textContent = '~' + (amt * 12.4).toFixed(2) + ' ' + ticker;
+  const btn = document.getElementById('tradeConfirmBtn');
+  if (amt > 0) { btn.disabled = false; btn.style.background = 'linear-gradient(135deg,#E8751A,#c45a08)'; btn.style.color = '#fff'; btn.style.cursor = 'pointer'; }
+  else { btn.disabled = true; btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#555'; btn.style.cursor = 'not-allowed'; }
+}
+function tradeStep2() {
+  document.getElementById('tradeStep1').classList.add('hidden');
+  document.getElementById('tradeStep2').classList.remove('hidden');
+}
+
+function openVote(idx) {
+  currentVoteIdx = idx;
+  const p = daoProposals[idx];
+  if (!p) return;
+  document.getElementById('voteProposalLabel').textContent = p.id + ': ' + p.title.slice(0, 40) + '...';
+  document.getElementById('voteIdLabel').textContent = p.id;
+  document.getElementById('voteCountLabel').textContent = p.votes + '/' + p.quorum;
+  document.getElementById('voteTimeLabel').textContent = p.timeLeft;
+  document.getElementById('stakeAmtInput').value = '';
+  document.getElementById('stakeWarning').classList.add('hidden');
+  document.getElementById('stakeBtn').disabled = true;
+  document.getElementById('stakeBtn').textContent = 'Enter minimum 10 SOL';
+  document.getElementById('stakeBtn').style.background = 'rgba(255,255,255,0.05)';
+  document.getElementById('stakeBtn').style.color = '#555';
+  document.getElementById('stakeBtn').style.cursor = 'not-allowed';
+  document.getElementById('voteModal').classList.remove('hidden');
+}
+function closeVote() { document.getElementById('voteModal').classList.add('hidden'); }
+function updateStake() {
+  const amt = parseFloat(document.getElementById('stakeAmtInput').value) || 0;
+  const warn = document.getElementById('stakeWarning');
+  const btn = document.getElementById('stakeBtn');
+  if (amt > 0 && amt < 10) {
+    warn.classList.remove('hidden'); warn.style.color = '#ef4444';
+    warn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>Minimum 10 SOL required to be eligible';
+    btn.disabled = true; btn.textContent = 'Enter minimum 10 SOL'; btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#555'; btn.style.cursor = 'not-allowed';
+  } else if (amt >= 10) {
+    warn.classList.remove('hidden'); warn.style.color = '#22c55e';
+    warn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>You\'ll have <span class="mono" style="font-weight:600">' + parseInt(amt) + ' votes</span>';
+    btn.disabled = false; btn.textContent = 'Stake ' + amt + ' SOL & Vote'; btn.style.background = 'linear-gradient(135deg,#3b82f6,#2563eb)'; btn.style.color = '#fff'; btn.style.cursor = 'pointer';
+  } else { warn.classList.add('hidden'); btn.disabled = true; btn.textContent = 'Enter minimum 10 SOL'; btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.color = '#555'; btn.style.cursor = 'not-allowed'; }
+}
+</script>
+
+<div id="tradeModal" class="modal-bg hidden" onclick="if(event.target===this)closeTrade()">
+  <div class="modal" style="max-width:420px" onclick="event.stopPropagation()">
+    <div id="tradeStep1">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(232,117,26,0.1);display:flex;align-items:center;justify-content:center">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8751A" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div><h3 style="margin:0;font-size:18px;font-weight:600;color:#fff" id="tradeTicker">Trade</h3><p style="margin:0;font-size:12px;color:#888" id="tradeName"></p></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <div style="flex:1;padding:10px 14px;border-radius:10px;background:rgba(232,117,26,0.08);border:1px solid rgba(232,117,26,0.2);text-align:center;cursor:pointer"><div style="font-size:11px;color:#E8751A;font-weight:600">BUY</div></div>
+        <div style="flex:1;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);text-align:center;cursor:pointer"><div style="font-size:11px;color:#666;font-weight:600">SELL</div></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block">Amount (SOL)</label>
+        <div style="position:relative"><input id="tradeAmtInput" type="number" placeholder="0.00" oninput="updateTradePreview()" style="width:100%;padding:14px 60px 14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:#fff;font-size:18px;font-weight:600;outline:none;font-family:'Space Mono',monospace"/><span style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:13px;color:#888;font-family:'Space Mono',monospace">SOL</span></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px">Percentage</label><span id="tradePctLabel" class="mono" style="font-size:13px;color:#E8751A;font-weight:600">0%</span></div>
+        <input id="tradePctSlider" type="range" min="0" max="100" value="0" oninput="updatePct()" style="width:100%;accent-color:#E8751A;height:6px;cursor:pointer"/>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;gap:6px" id="pctBtns"></div>
+      </div>
+      <div style="padding:14px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:#666">You pay</span><span id="tradePayLabel" class="mono" style="font-size:13px;color:#fff;font-weight:600">0.00 SOL</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:#666">You receive</span><span id="tradeRecvLabel" class="mono" style="font-size:13px;color:#22c55e;font-weight:600">~0.00</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:#666">APY</span><span id="tradeApyLabel" class="mono" style="font-size:13px;color:#E8751A;font-weight:600"></span></div>
+      </div>
+      <button id="tradeConfirmBtn" onclick="tradeStep2()" disabled style="width:100%;padding:14px;border-radius:12px;background:rgba(255,255,255,0.05);border:none;color:#555;font-size:14px;font-weight:600;cursor:not-allowed">Confirm Trade</button>
+      <button onclick="closeTrade()" style="margin-top:8px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#888;font-size:13px;cursor:pointer">Cancel</button>
+    </div>
+    <div id="tradeStep2" class="hidden" style="text-align:center;padding:20px 0">
+      <div style="width:64px;height:64px;border-radius:16px;background:rgba(232,117,26,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#E8751A" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div>
+      <h3 style="margin:0 0 8px;font-size:20px;font-weight:600;color:#fff">API Key Required</h3>
+      <p style="margin:0 0 6px;font-size:14px;color:#aaa">To execute on-chain trades, you need a Solana RPC endpoint.</p>
+      <p style="margin:0 0 28px;font-size:13px;color:#666">Get your free API key to interact with the Solana blockchain.</p>
+      <a href="https://www.helius.dev" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;background:linear-gradient(135deg,#E8751A,#c45a08);color:#fff;font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 4px 20px rgba(232,117,26,0.3)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Get API Key on Helius.dev</a>
+      <button onclick="closeTrade()" style="display:block;margin:16px auto 0;padding:10px 24px;background:transparent;border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:#888;font-size:13px;cursor:pointer">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="voteModal" class="modal-bg hidden" onclick="if(event.target===this)closeVote()">
+  <div class="modal" style="max-width:420px;border-color:rgba(59,130,246,0.2)" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:44px;height:44px;border-radius:12px;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div><h3 style="margin:0;font-size:18px;font-weight:600;color:#fff">Stake to Vote</h3><p id="voteProposalLabel" style="margin:0;font-size:12px;color:#888"></p></div>
+    </div>
+    <div style="padding:16px;border-radius:14px;background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.12);margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span style="font-size:13px;color:#93c5fd;font-weight:500">Voting Eligibility Requirements</span></div>
+      <div style="font-size:12px;color:#7aa2d4;line-height:1.7">Minimum stake: <span class="mono" style="color:#fff;font-weight:600">10 SOL</span><br/>Lock period: <span class="mono" style="color:#fff;font-weight:600">7 days</span><br/>Voting power: <span class="mono" style="color:#fff;font-weight:600">1 SOL = 1 Vote</span></div>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block">Stake Amount (SOL)</label>
+      <div style="position:relative"><input id="stakeAmtInput" type="number" placeholder="Min. 10 SOL" oninput="updateStake()" style="width:100%;padding:14px 60px 14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:#fff;font-size:18px;font-weight:600;outline:none;font-family:'Space Mono',monospace"/><span style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:13px;color:#888;font-family:'Space Mono',monospace">SOL</span></div>
+      <div id="stakeWarning" style="margin-top:6px;font-size:11px" class="hidden"></div>
+    </div>
+    <div style="padding:14px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:#666">Proposal</span><span id="voteIdLabel" class="mono" style="font-size:12px;color:#3b82f6;font-weight:600"></span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:#666">Current votes</span><span id="voteCountLabel" class="mono" style="font-size:12px;color:#fff;font-weight:600"></span></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:#666">Time remaining</span><span id="voteTimeLabel" class="mono" style="font-size:12px;color:#fbbf24;font-weight:600"></span></div>
+    </div>
+    <button id="stakeBtn" disabled style="width:100%;padding:14px;border-radius:12px;background:rgba(255,255,255,0.05);border:none;color:#555;font-size:14px;font-weight:600;cursor:not-allowed">Enter minimum 10 SOL</button>
+    <button onclick="closeVote()" style="margin-top:8px;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:#888;font-size:13px;cursor:pointer">Cancel</button>
+  </div>
+</div>
+</body></html>
